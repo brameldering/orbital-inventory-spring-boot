@@ -1,4 +1,4 @@
-package com.orbitelco.inventory.data.entity.repository;
+package com.orbitelco.inventory.data.repository;
 
 import com.orbitelco.inventory.data.entity.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
