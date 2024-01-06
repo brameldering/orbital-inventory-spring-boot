@@ -1,7 +1,11 @@
 package com.orbitelco.inventory.data.entity;
 
+import com.orbitelco.inventory.data.common.SerialStatus;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 // import jakarta.persistence.GeneratedValue;
 // import jakarta.persistence.GenerationType;
 // import jakarta.persistence.Id;
@@ -21,8 +25,12 @@ public class SerialNumber {
     // @Column(name="serial_number_id")
     // @GeneratedValue(strategy = GenerationType.AUTO)
     // private long id;
-    @Column(name="product_id")
-    private String productId;
-    @Column(name="serial_number")
-    private String serialNumber;
+    // No need to define the following again because of SerialNumberKey
+    // @Column(name="product_id")
+    // private String productId;
+    // @Column(name="serial_number")
+    // private String serialNumber;
+    @Enumerated(EnumType.STRING) 
+    @Column(name = "status")
+    private SerialStatus status; // Status is an enum
 }

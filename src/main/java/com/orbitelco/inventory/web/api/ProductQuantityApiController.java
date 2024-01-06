@@ -5,7 +5,7 @@ import com.orbitelco.inventory.data.repository.ProductQuantityRepository;
 import com.orbitelco.inventory.web.exception.BadRequestException;
 import com.orbitelco.inventory.web.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.DeleteMapping;
+// import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/reservations")
+@RequestMapping("/api/quantity")
 public class ProductQuantityApiController {
 
   private final ProductQuantityRepository productQuantityRepository;
@@ -54,11 +54,11 @@ public class ProductQuantityApiController {
    }
    return productQuantityRepository.save(productQuantity);
   }
-
-  @DeleteMapping("/{id}")
-  @ResponseStatus(HttpStatus.RESET_CONTENT)
-  public void deleteProduct(@PathVariable("id")String id){
-    this.productQuantityRepository.deleteById(id);
-  }
+  // Delete should be performed by Kafka upon deletion of a product
+  // @DeleteMapping("/{id}")
+  // @ResponseStatus(HttpStatus.RESET_CONTENT)
+  // public void deleteProduct(@PathVariable("id")String id){
+  //   this.productQuantityRepository.deleteById(id);
+  // }
 
 }
