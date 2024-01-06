@@ -1,7 +1,7 @@
 package com.orbitelco.inventory.web.api;
 
-import com.orbitelco.inventory.data.entity.Guest;
-import com.orbitelco.inventory.data.repository.GuestRepository;
+import com.orbitelco.inventory.data.entity.Product;
+import com.orbitelco.inventory.data.repository.ProductRepository;
 import com.orbitelco.inventory.web.exception.BadRequestException;
 import com.orbitelco.inventory.web.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -18,46 +18,46 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/guests")
-public class GuestApiController {
+@RequestMapping("/api/products")
+public class ProductApiController {
 
-  private final GuestRepository guestRepository;
+  private final ProductRepository productRepository;
 
-  public GuestApiController(GuestRepository guestRepository) {
-    this.guestRepository = guestRepository;
+  public ProductApiController(ProductRepository productRepository) {
+    this.productRepository = productRepository;
   }
 
   @GetMapping
-  public List<Guest> getAllGuests(){
-    return this.guestRepository.findAll();
+  public List<Product> getAllProducts(){
+    return this.productRepository.findAll();
   }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public Guest addGuest(@RequestBody Guest guest){
-    return this.guestRepository.save(guest);
+  public Product addProduct(@RequestBody Product product){
+    return this.productRepository.save(product);
   }
 
   @GetMapping("/{id}")
-  public Guest getGuest(@PathVariable("id")long id){
-    Optional<Guest> guest = this.guestRepository.findById(id);
-    if (guest.isEmpty()){
-      throw new NotFoundException("guest not found with id: " + id);
+  public Product getProduct(@PathVariable("id")String id){
+    Optional<Product> product = this.productRepository.findById(id);
+    if (product.isEmpty()){
+      throw new NotFoundException("product not found with id: " + id);
     }
-    return guest.get();
+    return product.get();
   }
 
   @PutMapping("/{id}")
-  public Guest updateGuest(@PathVariable("id")long id, @RequestBody Guest guest){
-   if (id != guest.getId()){
+  public Product updateProduct(@PathVariable("id")String id, @RequestBody Product product){
+   if (id != product.getProductId()){
      throw new BadRequestException("id on path must match body");
    }
-   return guestRepository.save(guest);
+   return productRepository.save(product);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.RESET_CONTENT)
-  public void deleteGuest(@PathVariable("id")long id){
-    this.guestRepository.deleteById(id);
+  public void deleteProduct(@PathVariable("id")String id){
+    this.productRepository.deleteById(id);
   }
 }
