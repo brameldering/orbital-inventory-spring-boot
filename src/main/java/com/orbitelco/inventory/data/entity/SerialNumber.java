@@ -30,6 +30,7 @@ public class SerialNumber {
     // private String productId;
     // @Column(name="serial_number")
     // private String serialNumber;
+    
     @Enumerated(EnumType.STRING) 
     @Column(name = "status")
     private SerialStatus status; // Status is an enum

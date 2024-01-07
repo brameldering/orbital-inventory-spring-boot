@@ -1,6 +1,8 @@
 package com.orbitelco.inventory.web.api;
 
+import com.orbitelco.inventory.data.DTO.ProductDTO;
 import com.orbitelco.inventory.data.entity.Product;
+import com.orbitelco.inventory.data.entity.ProductQuantity;
 import com.orbitelco.inventory.data.repository.ProductRepository;
 import com.orbitelco.inventory.web.exception.BadRequestException;
 import com.orbitelco.inventory.web.exception.NotFoundException;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/products")
@@ -28,35 +31,65 @@ public class ProductApiController {
   }
 
   @GetMapping
-  public List<Product> getAllProducts(){
-    return this.productRepository.findAll();
+  public List<ProductDTO> getAllProducts() {
+    return this.productRepository.findAll().stream()
+        .map(ProductDTO::fromEntity)
+        .collect(Collectors.toList());
   }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public Product addProduct(@RequestBody Product product){
-    return this.productRepository.save(product);
+  public ProductDTO addProduct(@RequestBody ProductDTO productDto){
+    Product product = ProductDTO.toEntity(productDto);
+    Product savedProduct = this.productRepository.save(product);
+    return ProductDTO.fromEntity(savedProduct);
   }
 
   @GetMapping("/{id}")
-  public Product getProduct(@PathVariable("id")String id){
+  public ProductDTO getProduct(@PathVariable("id")String id){
     Optional<Product> product = this.productRepository.findById(id);
     if (product.isEmpty()){
-      throw new NotFoundException("product not found with id: " + id);
+      throw new NotFoundException("Product not found with id: " + id);
     }
-    return product.get();
+    return ProductDTO.fromEntity(product.get());
   }
 
   @PutMapping("/{id}")
-  public Product updateProduct(@PathVariable("id")String id, @RequestBody Product product){
-   if (id != product.getProductId()){
-     throw new BadRequestException("id on path must match body");
-   }
-   return productRepository.save(product);
+  public ProductDTO updateProduct(@PathVariable("id") String id, @RequestBody ProductDTO productDto) {
+      if (!id.equals(productDto.getProductId())) {
+          throw new BadRequestException("ID on path must match body");
+      }
+  
+      // Find the existing product
+      Optional<Product> existingProductOpt = productRepository.findById(id);
+      if (existingProductOpt.isEmpty()) {
+          throw new NotFoundException("Product not found with ID: " + id);
+      }
+      Product existingProduct = existingProductOpt.get();
+  
+      // Update product details from DTO
+      existingProduct.setName(productDto.getName());
+      existingProduct.setBrand(productDto.getBrand());
+      existingProduct.setCategory(productDto.getCategory());
+  
+      // Update quantity if it's provided in the DTO
+      ProductQuantity existingQuantity = existingProduct.getProductQuantity();
+      if (existingQuantity == null) {
+          existingQuantity = new ProductQuantity();
+          existingQuantity.setProduct(existingProduct);
+      }
+      existingQuantity.setQuantity(productDto.getQuantity());
+      existingProduct.setProductQuantity(existingQuantity);
+  
+      // Save the updated product
+      Product updatedProduct = productRepository.save(existingProduct);
+  
+      // Return the updated product as DTO
+      return ProductDTO.fromEntity(updatedProduct);
   }
-
+  
   @DeleteMapping("/{id}")
-  @ResponseStatus(HttpStatus.RESET_CONTENT)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteProduct(@PathVariable("id")String id){
     this.productRepository.deleteById(id);
   }
