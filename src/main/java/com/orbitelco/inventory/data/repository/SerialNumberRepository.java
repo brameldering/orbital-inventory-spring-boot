@@ -9,6 +9,6 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SerialNumberRepository extends JpaRepository<SerialNumber, SerialNumberKey>{
-    List<SerialNumber> findByStatus(SerialStatus status);
+	List<SerialNumber> findByStatus(SerialStatus status);
 
 }
